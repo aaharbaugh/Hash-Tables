@@ -60,6 +60,7 @@ class HashTable:
             newLinkedPair = LinkedPair(key, value)
             newLinkedPair.next = self.storage[hashed_key]
             self.storage[hashed_key] = newLinkedPair
+        self.count += 1
         
 
 
@@ -90,19 +91,23 @@ class HashTable:
                         if previousKey == None: 
                             #first item in list match. 
                             self.storage[hashed_key] = currentKey.next
+                            self.count -= 1
                             return
                         else: 
                             previousKey.next = currentKey.next
+                            self.count -= 1
                             return
                     else:
                         #last item in list match. 
                         if previousKey == None:
                             #only item in list case. 
                             self.storage[hashed_key] = None
+                            self.count -= 1
                             return
                         else: 
                         #previous key pointer now points to none. effectively removing the item from the list. 
                             previousKey.next = None
+                            self.count -= 1
                             return
                 else: 
                     #previous key must equal current key so it is the previous key
@@ -142,7 +147,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        old_storage = self.storage
+        self.storage = self.capacity * [None]
+
+        
+        for existing_key in old_storage:
+                #for each key, insert into storage. 
+            current_key = existing_key
+            while current_key: 
+                self.insert(current_key.key, current_key.value)
+                current_key = current_key.next
+
 
 
 
