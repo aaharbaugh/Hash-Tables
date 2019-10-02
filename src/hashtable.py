@@ -13,6 +13,7 @@ class HashTable:
     that accepts string keys
     '''
     def __init__(self, capacity):
+        self.count = 0
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
@@ -76,18 +77,40 @@ class HashTable:
         if self.storage[hashed_key] == None:
             print('Key is not found')
         else: 
+            previousKey = None
             currentKey = self.storage[hashed_key]
-            if currentKey.key == key:
-                self.storage[hashed_key] = currentKey.next
-            previousKey = self.storage[hashed_key]
+
+            #loop through the list. Find the Matching list item. 
             while currentKey:
-                if currentKey.next.key == key:
-                    #remove currentKey
-                    #patch previous key together with next key.
-                    previousKey.next = currentKey.next.next 
+                if currentKey.key == key:
+                    #remove the matching list item
+                    print('key matched, removing item')
+                    #patch the list. 
+                    if currentKey.next != None: 
+                        if previousKey == None: 
+                            #first item in list match. 
+                            self.storage[hashed_key] = currentKey.next
+                            return
+                        else: 
+                            previousKey.next = currentKey.next
+                            return
+                    else:
+                        #last item in list match. 
+                        if previousKey == None:
+                            #only item in list case. 
+                            self.storage[hashed_key] = None
+                            return
+                        else: 
+                        #previous key pointer now points to none. effectively removing the item from the list. 
+                            previousKey.next = None
+                            return
                 else: 
-                    previousKey = previousKey.next
+                    #previous key must equal current key so it is the previous key
+                    previousKey = currentKey
+                    #current key does not match, lets move to next item in array. 
                     currentKey = currentKey.next
+            print("key not found")
+
 
 
 
