@@ -13,6 +13,7 @@ class HashTable:
     that accepts string keys
     '''
     def __init__(self, capacity):
+        self.count = 0
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
@@ -51,7 +52,16 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+
+        if self.storage[hashed_key] == None:
+            self.storage[hashed_key] = LinkedPair(key, value)
+        else: 
+            newLinkedPair = LinkedPair(key, value)
+            newLinkedPair.next = self.storage[hashed_key]
+            self.storage[hashed_key] = newLinkedPair
+        self.count += 1
+        
 
 
 
@@ -63,7 +73,51 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+
+        if self.storage[hashed_key] == None:
+            print('Key is not found')
+        else: 
+            previousKey = None
+            currentKey = self.storage[hashed_key]
+
+            #loop through the list. Find the Matching list item. 
+            while currentKey:
+                if currentKey.key == key:
+                    #remove the matching list item
+                    print('key matched, removing item')
+                    #patch the list. 
+                    if currentKey.next != None: 
+                        if previousKey == None: 
+                            #first item in list match. 
+                            self.storage[hashed_key] = currentKey.next
+                            self.count -= 1
+                            return
+                        else: 
+                            previousKey.next = currentKey.next
+                            self.count -= 1
+                            return
+                    else:
+                        #last item in list match. 
+                        if previousKey == None:
+                            #only item in list case. 
+                            self.storage[hashed_key] = None
+                            self.count -= 1
+                            return
+                        else: 
+                        #previous key pointer now points to none. effectively removing the item from the list. 
+                            previousKey.next = None
+                            self.count -= 1
+                            return
+                else: 
+                    #previous key must equal current key so it is the previous key
+                    previousKey = currentKey
+                    #current key does not match, lets move to next item in array. 
+                    currentKey = currentKey.next
+            print("key not found")
+
+
+
 
 
     def retrieve(self, key):
@@ -74,7 +128,16 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        hashed_key = self._hash_mod(key)
+        currentKey = self.storage[hashed_key]
+
+        while currentKey:
+            if currentKey.key != key:
+                currentKey = currentKey.next
+            else:
+                return currentKey.value
+        return None
+        
 
 
     def resize(self):
@@ -84,7 +147,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        old_storage = self.storage
+        self.storage = self.capacity * [None]
+
+        
+        for existing_key in old_storage:
+                #for each key, insert into storage. 
+            current_key = existing_key
+            while current_key: 
+                self.insert(current_key.key, current_key.value)
+                current_key = current_key.next
+
 
 
 
@@ -113,5 +187,5 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
-
+    print(ht)
     print("")
